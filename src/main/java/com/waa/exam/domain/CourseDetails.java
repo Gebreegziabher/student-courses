@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalTime;
 
 @Entity
@@ -23,6 +22,6 @@ public class CourseDetails {
     private String program;
     private LocalTime lastUpdate;
 
-    @OneToOne
+    @OneToOne(mappedBy = "courseDetails")//(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Course course;
 }

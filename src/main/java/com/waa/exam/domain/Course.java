@@ -1,5 +1,6 @@
 package com.waa.exam.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,8 @@ public class Course {
     private String Id;
     private String name;
 
-    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "course")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    //@JsonManagedReference
     //@JoinColumn(name = "courseId")
     private CourseDetails courseDetails;
 

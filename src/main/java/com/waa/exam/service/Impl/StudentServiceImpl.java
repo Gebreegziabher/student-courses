@@ -1,21 +1,41 @@
 package com.waa.exam.service.Impl;
 
+import com.waa.exam.domain.CourseDetails;
 import com.waa.exam.domain.Student;
+import com.waa.exam.domain.dto.CourseDto;
 import com.waa.exam.domain.dto.StudentDto;
-import com.waa.exam.repo.CourseRepo;
 import com.waa.exam.repo.StudentRepo;
 import com.waa.exam.service.StudentService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class StudentServiceImpl implements StudentService {
     private StudentRepo repo;
     private ModelMapper modelMapper;
+    @PersistenceContext
+    EntityManager entityManager;
+
     public StudentServiceImpl(StudentRepo repo, ModelMapper modelMapper){
         this.repo = repo;
         this.modelMapper = modelMapper;
@@ -25,8 +45,48 @@ public class StudentServiceImpl implements StudentService {
         repo.findAll().forEach(list::add);
         return list.stream().map(m -> modelMapper.map(m, StudentDto.class)).collect(Collectors.toList());
     }
+    public List<CourseDto> findCoursesById(int id){
+        Student student = repo.findById(id).get();
+        return student.getCourses().stream().map(m -> modelMapper.map(m, CourseDto.class)).collect(Collectors.toList());
+    }
+    public List<StudentDto> findByGpaLessThanEqual(double gpa){
+        List<Student> list = new ArrayList<>();
+        repo.findByGpaLessThanEqual(gpa).forEach(list::add);
+        return list.stream().map(m -> modelMapper.map(m, StudentDto.class)).collect(Collectors.toList());
+    }
+
+    public List<StudentDto> findbyJPQA(String program, double gpa){
+        List<Student> list = new ArrayList<>();
+        var result = repo.findbyJPQA(program, gpa);
+        repo.findbyJPQA(program,gpa).forEach(list::add);
+        return list.stream().map(m -> modelMapper.map(m, StudentDto.class)).collect(Collectors.toList());
+    }
+
+    public List<StudentDto> findByCriteria(String program, Double gpa){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Student> criteriaQuery = criteriaBuilder.createQuery(Student.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        Root<Student> root = criteriaQuery.from(Student.class);
+        if(program != null){
+            Join<Object, Object> coursesJoin = root.join( "courses" );
+            Join<Object, Object> courseDetailsJoin = coursesJoin.join( "courseDetails" );
+            Predicate programPredicate = criteriaBuilder.equal(courseDetailsJoin.get("program"), program);
+            predicates.add(programPredicate);
+        }
+
+        if(gpa != null){
+            Predicate gpaPredicate = criteriaBuilder.lessThanOrEqualTo(root.get("gpa"), gpa);
+            predicates.add(gpaPredicate);
+        }
+
+        criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+        TypedQuery<Student> query = entityManager.createQuery(criteriaQuery);
+        return query.getResultList().stream().map(m -> modelMapper.map(m, StudentDto.class)).collect(Collectors.toList());
+    }
+
     public StudentDto findById(int id){
-        return modelMapper.map(repo.findById(id), StudentDto.class);
+        return modelMapper.map(repo.findById(id).get(), StudentDto.class);
     }
     public void deleteByid(int id){
         repo.deleteById(id);

@@ -1,13 +1,13 @@
 package com.waa.exam.service.Impl;
 
 import com.waa.exam.domain.Course;
+import com.waa.exam.domain.Student;
 import com.waa.exam.domain.dto.CourseDto;
-import com.waa.exam.repo.AddressRepo;
+import com.waa.exam.domain.dto.StudentDto;
 import com.waa.exam.repo.CourseRepo;
 import com.waa.exam.service.CourseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +21,19 @@ public class CourseServiceImpl implements CourseService {
         this.repo = repo;
         this.modelMapper = modelMapper;
     }
-    public List<CourseDto> findAll(){
+    public List<Course> findAll(){
         List<Course> list = new ArrayList<>();
         repo.findAll().forEach(list::add);
-        return list.stream().map(m -> modelMapper.map(m, CourseDto.class)).collect(Collectors.toList());
+        return list;
+        //return list.stream().map(m -> modelMapper.map(m, CourseDto.class)).collect(Collectors.toList());
     }
     public CourseDto findById(String id){
-        return modelMapper.map(repo.findById(id), CourseDto.class);
+        return modelMapper.map(repo.findById(id).get(), CourseDto.class);
+    }
+
+    public List<StudentDto> findStudentsById(String id){
+        List<Student> students = repo.findById(id).get().getStudents();
+        return students.stream().map(m -> modelMapper.map(m, StudentDto.class)).collect(Collectors.toList());
     }
     public void deleteByid(String id){
         repo.deleteById(id);
