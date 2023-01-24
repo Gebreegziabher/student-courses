@@ -1,6 +1,5 @@
 package com.waa.exam.service.Impl;
 
-import com.waa.exam.domain.CourseDetails;
 import com.waa.exam.domain.Student;
 import com.waa.exam.domain.dto.CourseDto;
 import com.waa.exam.domain.dto.StudentDto;
@@ -8,24 +7,14 @@ import com.waa.exam.repo.StudentRepo;
 import com.waa.exam.service.StudentService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
