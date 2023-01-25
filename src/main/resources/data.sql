@@ -25,9 +25,9 @@ insert into student (gpa, name, address_id) values(2.8, 'Student 9',1);
 insert into student (gpa, name, address_id) values(3.3, 'Student 10',1);
 
 insert into student_courses(students_id, courses_id) values(1,'CS-401');
---insert into student_courses(students_id, courses_id) values(1,'CS-545');
---insert into student_courses(students_id, courses_id) values(1,'CS-544');
---insert into student_courses(students_id, courses_id) values(1,'CS-550');
+insert into student_courses(students_id, courses_id) values(1,'CS-545');
+insert into student_courses(students_id, courses_id) values(1,'CS-544');
+insert into student_courses(students_id, courses_id) values(1,'CS-550');
 
 insert into student_courses(students_id, courses_id) values(2,'CS-401');
 insert into student_courses(students_id, courses_id) values(2,'CS-550');

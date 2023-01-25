@@ -71,6 +71,7 @@ public class StudentServiceImpl implements StudentService {
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
         TypedQuery<Student> query = entityManager.createQuery(criteriaQuery);
+        //String queryJ = query.unwrap(org.hibernate.Query.class).getQueryString()
         return query.getResultList().stream().map(m -> modelMapper.map(m, StudentDto.class)).collect(Collectors.toList());
     }
 
